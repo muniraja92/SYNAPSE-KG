@@ -44,6 +44,7 @@ EVAL_SEED = 12345       # fixed negatives for validation/test
 N_NEG = 99
 KS = [5, 10, 20]
 EVAL_EVERY = 5
+SMOKE_EPOCHS = int(os.environ.get("SMOKE_EPOCHS", "0"))   # >0 only for a quick pipeline test; never for reported runs
 
 # ---------------------------------------------------------------- data (identical preprocessing)
 def load_and_preprocess():
@@ -313,6 +314,7 @@ def batched_pair_scores(fn, C, chunk=20000):
     return out.reshape(n, m)
 
 def train_loop(model, params_lr, epochs, bs, step_fn, val_fn, n_train, tag):
+    if SMOKE_EPOCHS: epochs = min(epochs, SMOKE_EPOCHS)
     opt = torch.optim.Adam(*params_lr) if isinstance(params_lr, tuple) else params_lr
     best, best_state, best_ep, losses = -1, None, 0, []
     for ep in range(epochs):
@@ -441,6 +443,16 @@ def run_seed(seed, D, feats_static, knn_k):
         o2, mu2, sd2, _, _ = fit_oracle(Xv[:, keep], yv, uv, seed)
         S2, _ = oracle_score(o2, mu2, sd2, Ft[:, :, keep]); abl[f'w/o {rm}'] = ranks_from_scores(S2)
     res['ranks'] = ranks; res['abl_ranks'] = abl
+    # Embedding diagnostics computed here so the stored seed result stays compact (identical maths
+    # to the former aggregate step): genre silhouette on all items, and the 500 rows used for t-SNE.
+    from sklearn.metrics import silhouette_score
+    ms = D['movies_subset']; prim = ms.set_index('item')['genres'].str.split('|').str[0].reindex(range(ni)).values
+    tsne_idx = np.random.default_rng(42).choice(ni, 500, replace=False)
+    res['sil'] = {}; res['tsne_emb'] = {}
+    for k, key in [('BRIDGE', 'emb_BRIDGE'), ('LightGCN', 'emb_LGCN'), ('MF-BPR', 'emb_MF')]:
+        res['sil'][k] = float(silhouette_score(res[key], prim, metric='cosine'))
+        res['tsne_emb'][k] = res[key][tsne_idx].astype(np.float32)
+        del res[key]
     return res
 
 # ---------------------------------------------------------------- main

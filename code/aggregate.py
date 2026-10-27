@@ -91,7 +91,7 @@ ms = D['movies_subset']; prim = ms.set_index('item')['genres'].str.split('|').st
 sil = {k: [] for k in ['BRIDGE', 'LightGCN', 'MF-BPR']}
 for s in seeds:
     for k, key in [('BRIDGE', 'emb_BRIDGE'), ('LightGCN', 'emb_LGCN'), ('MF-BPR', 'emb_MF')]:
-        sil[k].append(float(silhouette_score(R[s][key], prim, metric='cosine')))
+        sil[k].append(R[s]['sil'][k] if 'sil' in R[s] else float(silhouette_score(R[s][key], prim, metric='cosine')))
 summary['silhouette_primary_genre'] = {k: [float(np.mean(v)), float(np.std(v, ddof=1)) if len(v) > 1 else 0.0] for k, v in sil.items()}
 summary['kg_counts_train_only'] = D['kg_counts']; summary['n_entities'] = D['n_entities']
 summary['dataset'] = {'users': nu, 'items': D['n_items'], 'train': int(len(D['train_u'])), 'val': nu, 'test': nu,
@@ -150,7 +150,8 @@ rng = np.random.default_rng(42); idx = rng.choice(D['n_items'], 500, replace=Fal
 cm = {x: plt.cm.tab20(i % 20) for i, x in enumerate(ug)}
 fig, axs = plt.subplots(1, 3, figsize=(18, 6))
 for ax, (k, key) in zip(axs, [('BRIDGE', 'emb_BRIDGE'), ('LightGCN', 'emb_LGCN'), ('MF-BPR', 'emb_MF')]):
-    xy = TSNE(n_components=2, random_state=42, perplexity=30).fit_transform(R[seeds[0]][key][idx])
+    rows = R[seeds[0]]['tsne_emb'][k] if 'tsne_emb' in R[seeds[0]] else R[seeds[0]][key][idx]
+    xy = TSNE(n_components=2, random_state=42, perplexity=30).fit_transform(rows)
     ax.scatter(xy[:, 0], xy[:, 1], c=[cm[x] for x in g], s=15, alpha=.7); ax.set_title(f'{k} (silhouette {summary["silhouette_primary_genre"][k][0]:.3f})')
 top = pd.Series(g).value_counts().head(8).index
 axs[2].legend(handles=[plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=cm[x], label=x) for x in top], fontsize=8)
