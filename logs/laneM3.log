@@ -1,0 +1,9 @@
+=== seed 4
+    MF-BPR lr=0.002: val NDCG@10=0.3657 at epoch 65 (ran 85; 22s)
+    LightGCN lr=0.002: val NDCG@10=0.3636 at epoch 195 (ran 200; 345s)
+    DRIP lr=0.001: val NDCG@10=0.3468 at epoch 75 (ran 95; 1602s)
+    MINT lr=0.002: val NDCG@10=0.3089 at epoch 10 (ran 50; 541s)
+    BRIDGE lr=0.002: val NDCG@10=0.3549 at epoch 50 (ran 70; 333s)
+    BRIDGE-UI lr=0.002: val NDCG@10=0.3569 at epoch 30 (ran 50; 191s)
+    NEXIS lr=0.002: val NDCG@10=0.3636 at epoch 40 (ran 60; 256s)
+=== seed 4 done in 3614s | full NDCG@10 SYNAPSE=0.0382 MF=0.0309

@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+ml-1m/
+amazon-vg/
+data.pkl
+deterministic.pkl
+out_*/data.pkl
+out_*/deterministic.pkl
+out_*/mf_full_seed*.npy
+tables/
+figures/

@@ -1,64 +1,179 @@
-# SYNAPSE-KG
+# SYNAPSE-KG: Evaluating Learned Fusion of Knowledge-Graph-Aware and Neural Recommenders under a Leakage-Free Protocol
 
-Code accompanying the article *SYNAPSE-KG: Meta-Learned Fusion of Target-Aware Attention, Momentum-Contrastive, Graph-Diffusion and Multi-Interest Recommenders* (P. Muniraja and S. M. Satapathy, School of Computer Science and Engineering, Vellore Institute of Technology).
+Code, protocol, logs, and result files for the article of the same title by Pasupuleti Muniraja and
+Shashank Mouli Satapathy (School of Computer Science and Engineering, Vellore Institute of Technology, India),
+submitted to *PeerJ Computer Science*.
 
-SYNAPSE-KG combines four neural scoring modules (DRIP, MINT, BRIDGE, NEXIS) with collaborative, genre-based content and popularity signals through a gated meta-learner (ORACLE).
+## Description
 
-## Contents
+SYNAPSE-KG fuses four neural recommenders with four auxiliary signals through a gated meta-learner, ORACLE
+(Output Routing And Component-Level Ensembling):
 
-| Path | Purpose |
+| Input | Type |
 |---|---|
-| `code/synapse_v3.py` | Full pipeline: data preparation, all baselines, the four modules, ORACLE, ablations. One seed per call. |
-| `code/aggregate.py` | Aggregates the seeds: mean ± std tables, paired t-tests and Wilcoxon tests with Holm correction, effect sizes, group analyses, all figures. |
-| `code/run_all.py` | Driver used for the reported run (Google Colab): parallel lanes, a checkpoint per finished seed, aggregation; `--restore` rebuilds seed files from a saved notebook output. |
-| `code/ablation_wilcoxon.py` | Adds the Wilcoxon test and d_z to the ablation comparisons (checks that the recomputed t-tests match the run exactly). |
-| `results/summary.json` | Results of the reported 5-seed run (every number in the article). |
-| `requirements.txt` | Python dependencies. |
-| `SYNAPSE_KG.ipynb`, `SYNAPSE-KG-Results-Final-*` | **Superseded.** The original notebook and its results. See "Changes from the original notebook" below. Kept for transparency only. |
+| DRIP | target-aware attention over the interaction history |
+| MINT | momentum-contrastive two-tower model |
+| BRIDGE | bidirectional propagation over a knowledge graph (interactions, item attributes, temporal transitions) |
+| NEXIS | multi-interest extraction by self-attentive pooling |
+| ItemKNN, Content, Popularity, LightGCN | auxiliary scores |
 
-## Reproducing the results
+The study asks whether learned fusion improves on the strongest single model, and whether the learned gate beats
+simple fusion rules on the same inputs, under a leakage-free protocol:
 
-1. Download MovieLens-1M (`ml-1m.zip`) from GroupLens and unzip it so that `ml-1m/ratings.dat` and `ml-1m/movies.dat` exist.
-2. Run the five training seeds and aggregate:
+- chronological splits;
+- the fusion layer fitted on a separate held-out interaction per user;
+- equal tuning for all neural models;
+- full-catalogue ranking as the primary endpoint (NDCG@10, five training seeds).
+
+It compares SYNAPSE-KG with:
+
+- seven single-model baselines: Popularity, Content, ItemKNN, UserKNN, EASE, MF-BPR, and LightGCN;
+- five fusion baselines: mean of inputs, logistic stacking, best single input, ORACLE with MF-BPR as an extra input,
+  and a five-seed MF-BPR ensemble.
+
+It also reports ablations, Holm-corrected paired tests, two-level bootstrap intervals, TOST equivalence tests, and
+stratified analyses.
+
+**Main result:**
+
+- On both datasets SYNAPSE-KG had the highest mean NDCG@10, but its advantage over the strongest single baseline
+  (EASE on MovieLens-1M, UserKNN on Video Games) and over logistic stacking was not statistically significant.
+- Removing the knowledge-graph relations made no detectable difference.
+
+## Dataset information
+
+Both datasets are public third-party data and are **not** redistributed here.
+
+| Dataset | Source | Files used | Place in |
+|---|---|---|---|
+| MovieLens-1M (Harper & Konstan, 2015) | GroupLens Research, https://grouplens.org/datasets/movielens/1m/ | `ratings.dat`, `movies.dat`, `users.dat` | `./ml-1m/` |
+| Amazon Reviews 2023, Video Games (Hou et al., 2026) | McAuley Lab, https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023 | `benchmark/5core/rating_only/Video_Games.csv`, `raw/meta_categories/meta_Video_Games.jsonl` | `./amazon-vg/` |
+
+Data preprocessing is deterministic and is performed by `synapse_v5.py prep` (Methodology below).
+`filter_meta.py` keeps the metadata of the Video Games items that survive filtering, written to `meta_needed.jsonl`.
+
+## Code information
+
+| File | Purpose |
+|---|---|
+| `synapse_v5.py` | Data preparation, knowledge graph, all models and baselines, learning-rate selection, ORACLE, fusion baselines, ablations. Subcommands: `prep`, `tune`, and seed numbers. |
+| `aggregate_v5.py` | Means and standard deviations, paired tests (Holm), two-level bootstrap intervals, TOST equivalence, training statistics. Writes `results.json` and `per_user_ndcg10.npz`. |
+| `stratify_v5.py` | Stratified analyses. Writes `stratification.json` and the forest plot `forest.pdf`. |
+| `make_tables.py`, `make_figures.py` | All tables and figures of the article, generated from the result files. |
+| `make_supplement.py` | The tables of Supplemental Text S1, generated from the result files. |
+| `filter_meta.py` | Filters the Video Games item metadata. |
+| `PROTOCOL_v5.md` | Evaluation protocol written before the experiments, with dated amendments. |
+| `requirements.txt` | Exact package versions. |
+| `logs/` | Logs of the learning-rate selection and seed runs. |
+| `out_ml1m/`, `out_vg/` | Result files for MovieLens-1M and Video Games (see below). |
+
+Each results folder contains:
+
+- `tune_*.json` and `tuned.json`: learning-rate selection.
+- `seed0.pkl` … `seed4.pkl`: per-user ranks of every model and variant, training logs, and gate weights. These are Python
+  pickles; load them only from this repository.
+- `mf_ensemble_ranks.npy`: per-user test ranks of the MF-BPR five-seed ensemble.
+- `results.json`, `per_user_ndcg10.npz`, `stratification.json`: aggregated results.
+
+The same files are provided with the article as Supplemental Data S1 (code and `out_ml1m/`) and Supplemental Data S2
+(`out_vg/`).
+
+## Usage instructions
+
+**Reproduce every reported number from the stored result files.** This takes minutes. First regenerate the
+splits and knowledge graphs, then run the analysis scripts:
 
 ```bash
 pip install -r requirements.txt
-cd code
-python synapse_v3.py prep                       # data preparation and deterministic baselines (cached)
-for s in 0 1 2 3 4; do python synapse_v3.py $s; done   # ~75-130 min per seed on one CPU core; seeds can run in parallel (run_all.py)
-python aggregate.py                             # writes out/summary.json and figures/
-python ablation_wilcoxon.py out out/summary.json   # adds the ablation Wilcoxon tests
+export ML_ROOT=./ml-1m VG_ROOT=./amazon-vg
+python filter_meta.py amazon-vg/Video_Games.csv amazon-vg/meta_Video_Games.jsonl amazon-vg/meta_needed.jsonl
+DATASET=ml1m OUT=out_ml1m python synapse_v5.py prep
+DATASET=vg   OUT=out_vg   python synapse_v5.py prep
+python aggregate_v5.py out_ml1m ; python aggregate_v5.py out_vg
+python stratify_v5.py out_ml1m ./ml-1m ; python stratify_v5.py out_vg
+python make_tables.py out_ml1m out_vg tables ; python make_figures.py out_ml1m out_vg figures
+python make_supplement.py out_ml1m out_vg s_tables.tex
 ```
 
-Environment variables `ML_ROOT` (default `./ml-1m`) and `OUT` (default `./out`) set the data and output folders.
-The data check printed by `prep` must read `users=2082 items=3105 train(original LOO)=202546`.
+Figures 4 and 5 of the article are `out_ml1m/forest.pdf` and `out_vg/forest.pdf`.
 
-### Exact reproduction
-The reported numbers come from one run on Google Colab (2 vCPUs, 27 October 2026) with Python 3.13.16, NumPy 2.1.3, pandas 2.2.3, SciPy 1.16.3, scikit-learn 1.6.1, and PyTorch 2.11.0+cpu, using one seed per process and one thread (`requirements.txt`). Many MovieLens-1M ratings share the same second: 1,019 of the 2,082 sampled users have a timestamp tie at a held-out position. These ties are broken by the pandas sort order, so other library versions can select a different held-out item for some users. That shifts metrics in the third decimal; for example, Popularity NDCG@10 is 0.2409 with the pinned versions and 0.2400 with pandas 3.0.5. Within any single run, all models share identical splits and candidates.
+**Rerun all experiments.** This takes hours on a CPU:
 
-## Results (5 seeds, mean ± sd)
-SYNAPSE-KG reaches NDCG@10 0.3600 ± 0.0031 and HR@10 0.6236 ± 0.0026. It is **on par with MF-BPR** (NDCG@10 0.3608 ± 0.0010; −0.21%, not significant after Holm correction) and significantly better than Popularity, ItemKNN, Content and LightGCN. See `results/summary.json`.
+```bash
+for D in ml1m vg; do
+  DATASET=$D OUT=out_$D python synapse_v5.py prep        # splits, knowledge graph, deterministic baselines
+  DATASET=$D OUT=out_$D python synapse_v5.py tune        # learning-rate selection on validation (seed 0)
+  DATASET=$D OUT=out_$D python synapse_v5.py 0 1 2 3 4   # five training seeds
+  python aggregate_v5.py out_$D
+done
+```
 
-## Evaluation protocol
+Rerunning the seeds also writes the full MF-BPR score matrices `mf_full_seed*.npy`, from which `aggregate_v5.py`
+recomputes `mf_ensemble_ranks.npy`.
 
-* User sample: 35% of MovieLens-1M users with at least 10 positive (rating ≥ 4) interactions, fixed seed 42; items with at least 5 interactions.
-* Chronological leave-one-out per user: last item = test, second-to-last = validation, the rest = training prefix. Every model, feature, history and knowledge-graph relation is built from the training prefix only.
-* Model selection on validation NDCG@10 only (epochs of every neural model, k of ItemKNN/UserKNN). ORACLE is fitted on validation pairs with early stopping on held-out validation users. The test split is used once.
-* Ranking: test item against 99 negatives sampled once (fixed seed) from items the user never interacted with; identical candidates for every model and seed; ties counted against the positive.
-* Five training seeds (0–4), mean ± standard deviation. Paired t-test and Wilcoxon signed-rank test on seed-averaged per-user NDCG@10, Holm-corrected; paired effect size d_z.
+One seed (all models, fusion baselines, and ablations) took 1.0 to 2.0 hours on MovieLens-1M and about 0.4 hours on
+Video Games, with one CPU thread per process. Retrained neural models can differ slightly across platforms because of
+floating-point reduction order. The stored seed files are the reference for every reported number.
 
-## Changes from the original notebook
+## Requirements
 
-The original notebook (`SYNAPSE_KG.ipynb`) contained evaluation defects that inflated the originally reported numbers. They are corrected in `code/synapse_v3.py`:
+- Python 3.13
+- torch 2.14.1
+- numpy 2.1.3
+- scipy 1.16.3
+- pandas 2.2.3
+- scikit-learn 1.6.1
+- matplotlib 3.11.2
 
-1. Content user profiles and DRIP histories were built from each user's full sequence, including the test item (test leakage).
-2. ORACLE was fitted on in-sample training pairs; there was no validation split.
-3. DRIP and NEXIS were evaluated with raw embedding dot products instead of their target-aware forward passes.
-4. LightGCN reused one forward pass per epoch across mini-batches.
-5. Each model drew its own random negatives, so comparisons were not paired.
-6. Ablations zeroed an input of an already-trained ORACLE instead of retraining it.
-7. Knowledge-graph relations were built from full sequences, including test items.
+The same versions are pinned in `requirements.txt`.
 
-## License
+The experiments were run on CPU only (Ubuntu 24.04, two virtual cores of an Intel Xeon at 2.1 GHz, 8 GB RAM).
+No GPU is needed.
 
-MIT (see `LICENSE`).
+## Methodology
+
+1. **Preprocessing.**
+   - Ratings of 4 or higher are kept as positive interactions.
+   - User (≥10) and item (≥5) filters are alternated until neither removes anything.
+   - A fixed random sample of users is drawn (seed 42): 35% for MovieLens-1M and 20% for Video Games.
+   - Interactions are ordered by timestamp, with ties broken by item ID. The last three interactions of each user are
+     the fusion, validation, and test items; the earlier ones form the training prefix.
+   - 99 sampled negatives per user are drawn once (seed 12345) and used for model selection and for the secondary metrics.
+2. **Knowledge graph.** Built from the training prefixes and item metadata only, with these relations:
+   - `INTERACTED`;
+   - `HAS_GENRE` (MovieLens-1M), or `HAS_CATEGORY` and `HAS_STORE` (Video Games);
+   - directed `TEMPORAL_NEXT`.
+3. **Training.**
+   - Every neural model gets the same learning-rate grid {5e-4, 1e-3, 2e-3}, selected on validation with seed 0.
+   - Early stopping: evaluation every 5 epochs, patience 4, at least 50 and at most 200 epochs.
+   - Five training seeds (0–4).
+4. **Fusion.** ORACLE and the fusion baselines are fitted on the fusion item of each user, never on validation or test data.
+5. **Evaluation.**
+   - Full-catalogue NDCG@K and HR@K for K = 5, 10, 20, and MRR; sampled metrics are secondary.
+   - Paired t-test and Wilcoxon test, Holm-adjusted.
+   - Two-level (users × seeds) bootstrap intervals and TOST equivalence (±5%).
+
+See `PROTOCOL_v5.md` and the Materials and Methods section of the article for details.
+
+## Citations
+
+If you use this code, please cite the article:
+
+> Muniraja P, Satapathy SM. SYNAPSE-KG: Evaluating learned fusion of knowledge-graph-aware and neural recommenders
+> under a leakage-free protocol. *PeerJ Computer Science* (under review), 2026.
+
+Please also cite the datasets:
+
+- Harper FM, Konstan JA. The MovieLens datasets: history and context. *ACM Transactions on Interactive Intelligent
+  Systems* 5(4):19, 2015. https://doi.org/10.1145/2827872
+- Hou Y, Li J, Fu X, He Z, Yan A, Chen X, McAuley J. Bridging language and items for retrieval and recommendation:
+  benchmarking LLMs as semantic encoders. *Proceedings of ACL 2026 (Long Papers)*, 3251–3265, 2026.
+  https://doi.org/10.18653/v1/2026.acl-long.147
+
+## License and contributions
+
+The code is released under the MIT License (see `LICENSE`). The datasets remain under the terms of their providers
+(GroupLens Research and the McAuley Lab).
+
+Issues and pull requests are welcome. For questions, contact the corresponding author, Shashank Mouli Satapathy
+(shashankmouli.s@vit.ac.in).

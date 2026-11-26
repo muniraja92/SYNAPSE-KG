@@ -1,0 +1,53 @@
+=== seed 0
+    MF-BPR lr=0.0005: val NDCG@10=0.2531 at epoch 105 (ran 125; 59s)
+    LightGCN lr=0.002: val NDCG@10=0.2993 at epoch 55 (ran 75; 183s)
+    DRIP lr=0.002: val NDCG@10=0.2306 at epoch 85 (ran 105; 714s)
+    MINT lr=0.002: val NDCG@10=0.1463 at epoch 55 (ran 75; 348s)
+    BRIDGE lr=0.002: val NDCG@10=0.2436 at epoch 40 (ran 60; 682s)
+    BRIDGE-UI lr=0.002: val NDCG@10=0.2296 at epoch 45 (ran 65; 529s)
+    NEXIS lr=0.0005: val NDCG@10=0.2485 at epoch 35 (ran 55; 218s)
+=== seed 0
+    MF-BPR lr=0.0005: val NDCG@10=0.2531 at epoch 105 (ran 125; 21s)
+    LightGCN lr=0.002: val NDCG@10=0.2993 at epoch 55 (ran 75; 59s)
+    DRIP lr=0.002: val NDCG@10=0.2306 at epoch 85 (ran 105; 251s)
+    MINT lr=0.002: val NDCG@10=0.1463 at epoch 55 (ran 75; 111s)
+    BRIDGE lr=0.002: val NDCG@10=0.2436 at epoch 40 (ran 60; 238s)
+    BRIDGE-UI lr=0.002: val NDCG@10=0.2296 at epoch 45 (ran 65; 183s)
+    NEXIS lr=0.0005: val NDCG@10=0.2485 at epoch 35 (ran 55; 80s)
+=== seed 0 done in 1474s | full NDCG@10 SYNAPSE=0.0263 MF=0.0175
+=== seed 1
+    MF-BPR lr=0.0005: val NDCG@10=0.2377 at epoch 65 (ran 85; 13s)
+    LightGCN lr=0.002: val NDCG@10=0.2948 at epoch 45 (ran 65; 52s)
+    DRIP lr=0.002: val NDCG@10=0.2242 at epoch 55 (ran 75; 155s)
+    MINT lr=0.002: val NDCG@10=0.1466 at epoch 65 (ran 85; 126s)
+    BRIDGE lr=0.002: val NDCG@10=0.2357 at epoch 20 (ran 50; 191s)
+    BRIDGE-UI lr=0.002: val NDCG@10=0.2391 at epoch 50 (ran 70; 208s)
+    NEXIS lr=0.0005: val NDCG@10=0.2487 at epoch 25 (ran 50; 69s)
+=== seed 1 done in 1362s | full NDCG@10 SYNAPSE=0.0293 MF=0.0159
+=== seed 2
+    MF-BPR lr=0.0005: val NDCG@10=0.2445 at epoch 65 (ran 85; 13s)
+    LightGCN lr=0.002: val NDCG@10=0.2933 at epoch 25 (ran 50; 39s)
+    DRIP lr=0.002: val NDCG@10=0.2313 at epoch 65 (ran 85; 175s)
+    MINT lr=0.002: val NDCG@10=0.1531 at epoch 70 (ran 90; 136s)
+    BRIDGE lr=0.002: val NDCG@10=0.2502 at epoch 35 (ran 55; 212s)
+    BRIDGE-UI lr=0.002: val NDCG@10=0.2253 at epoch 35 (ran 55; 155s)
+    NEXIS lr=0.0005: val NDCG@10=0.2564 at epoch 30 (ran 50; 73s)
+=== seed 2 done in 1317s | full NDCG@10 SYNAPSE=0.0273 MF=0.0176
+=== seed 3
+    MF-BPR lr=0.0005: val NDCG@10=0.2392 at epoch 85 (ran 105; 15s)
+    LightGCN lr=0.002: val NDCG@10=0.2909 at epoch 45 (ran 65; 49s)
+    DRIP lr=0.002: val NDCG@10=0.2337 at epoch 90 (ran 110; 196s)
+    MINT lr=0.002: val NDCG@10=0.1435 at epoch 55 (ran 75; 108s)
+    BRIDGE lr=0.002: val NDCG@10=0.2372 at epoch 25 (ran 50; 214s)
+    BRIDGE-UI lr=0.002: val NDCG@10=0.2290 at epoch 55 (ran 75; 226s)
+    NEXIS lr=0.0005: val NDCG@10=0.2497 at epoch 35 (ran 55; 76s)
+=== seed 3 done in 1452s | full NDCG@10 SYNAPSE=0.0258 MF=0.0174
+=== seed 4
+    MF-BPR lr=0.0005: val NDCG@10=0.2435 at epoch 70 (ran 90; 12s)
+    LightGCN lr=0.002: val NDCG@10=0.2933 at epoch 40 (ran 60; 45s)
+    DRIP lr=0.002: val NDCG@10=0.2217 at epoch 50 (ran 70; 138s)
+    MINT lr=0.002: val NDCG@10=0.1483 at epoch 90 (ran 110; 162s)
+    BRIDGE lr=0.002: val NDCG@10=0.2418 at epoch 85 (ran 105; 419s)
+    BRIDGE-UI lr=0.002: val NDCG@10=0.2328 at epoch 30 (ran 50; 150s)
+    NEXIS lr=0.0005: val NDCG@10=0.2565 at epoch 35 (ran 55; 85s)
+=== seed 4 done in 1617s | full NDCG@10 SYNAPSE=0.0263 MF=0.0213
