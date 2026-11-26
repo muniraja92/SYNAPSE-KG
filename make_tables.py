@@ -2,6 +2,7 @@
 Usage: python make_tables.py OUT_ML OUT_VG TEXDIR"""
 import sys, json
 ML, VG, TD = sys.argv[1], sys.argv[2], sys.argv[3]
+import os; os.makedirs(TD, exist_ok=True)
 R = {'ml': json.load(open(f"{ML}/results.json")), 'vg': json.load(open(f"{VG}/results.json"))}
 NAME = {'ml': 'MovieLens-1M', 'vg': 'Amazon Video Games'}
 def sg(x, d=2):

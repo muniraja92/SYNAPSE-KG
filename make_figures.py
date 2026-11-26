@@ -3,6 +3,7 @@ import sys, json, numpy as np
 import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
 from scipy import stats
 ML, VG, FD = sys.argv[1:4]
+import os; os.makedirs(FD, exist_ok=True)
 R = {'MovieLens-1M': json.load(open(f"{ML}/results.json")), 'Amazon Video Games': json.load(open(f"{VG}/results.json"))}
 PU = {'MovieLens-1M': np.load(f"{ML}/per_user_ndcg10.npz"), 'Amazon Video Games': np.load(f"{VG}/per_user_ndcg10.npz")}
 plt.rcParams.update({'font.size': 10})

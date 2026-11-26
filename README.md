@@ -80,24 +80,31 @@ The same files are provided with the article as Supplemental Data S1 (code and `
 
 ## Usage instructions
 
-**Reproduce every reported number from the stored result files.** This takes minutes. First regenerate the
-splits and knowledge graphs, then run the analysis scripts:
+**1. Tables and figures from the stored results (no data download needed, about a minute):**
 
 ```bash
 pip install -r requirements.txt
+python make_tables.py out_ml1m out_vg tables         # Tables 1-7 of the article (LaTeX)
+python make_figures.py out_ml1m out_vg figures       # Figures 2 and 3
+python make_supplement.py out_ml1m out_vg s_tables.tex   # Tables S1-S9 of Supplemental Text S1
+```
+
+Figures 4 and 5 are the stored forest plots `out_ml1m/forest.pdf` and `out_vg/forest.pdf`.
+
+**2. Recompute all statistics from the stored per-seed results.** This step needs the datasets (see Dataset information).
+It regenerates the splits and knowledge graphs deterministically, then rebuilds `results.json`,
+`per_user_ndcg10.npz`, `stratification.json`, and the forest plots:
+
+```bash
 export ML_ROOT=./ml-1m VG_ROOT=./amazon-vg
 python filter_meta.py amazon-vg/Video_Games.csv amazon-vg/meta_Video_Games.jsonl amazon-vg/meta_needed.jsonl
 DATASET=ml1m OUT=out_ml1m python synapse_v5.py prep
 DATASET=vg   OUT=out_vg   python synapse_v5.py prep
 python aggregate_v5.py out_ml1m ; python aggregate_v5.py out_vg
 python stratify_v5.py out_ml1m ./ml-1m ; python stratify_v5.py out_vg
-python make_tables.py out_ml1m out_vg tables ; python make_figures.py out_ml1m out_vg figures
-python make_supplement.py out_ml1m out_vg s_tables.tex
 ```
 
-Figures 4 and 5 of the article are `out_ml1m/forest.pdf` and `out_vg/forest.pdf`.
-
-**Rerun all experiments.** This takes hours on a CPU:
+**3. Rerun all experiments.** This takes hours on a CPU:
 
 ```bash
 for D in ml1m vg; do
