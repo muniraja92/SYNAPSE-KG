@@ -56,7 +56,7 @@ for ds in D:
     sl = R[ds]['seed_level']
     rows.append("\\multicolumn{6}{@{}l}{Paired $t$-test on seed means: " + "; ".join(f"vs {k}, $t = {v['t']:.2f}$, $p = {v['p']:.3f}$" for k, v in sl.items()) + "} \\\\")
     rows.append("\\midrule")
-out.append(table("Full-catalogue NDCG@10 of each training seed for SYNAPSE-KG, MF-BPR, and the strongest single-model baseline (deterministic, so constant across seeds).",
+out.append(table("Full-catalog NDCG@10 of each training seed for SYNAPSE-KG, MF-BPR, and the strongest single-model baseline (deterministic, so constant across seeds).",
                  "tab:s_seeds", "@{}l ccccc@{}", "\\textbf{Model} & \\textbf{Seed 0} & \\textbf{Seed 1} & \\textbf{Seed 2} & \\textbf{Seed 3} & \\textbf{Seed 4}", rows[:-1]))
 # S4: training per seed
 rows = []
@@ -68,9 +68,9 @@ for ds in D:
     rows.append(f"ORACLE & {', '.join(map(str, tr['SYNAPSE-KG']['oracle_best_epoch']))} & -- & {tr['SYNAPSE-KG']['oracle_minutes']:.1f} \\\\")
     rows.append("\\midrule")
 out.append(table("Training of the neural models per seed (seeds 0--4): epoch of the restored checkpoint, epochs run before early stopping, and mean training time per seed in minutes. ORACLE is early-stopped on the fusion pairs of held-out users (at most 100 epochs).",
-                 "tab:s_train", "@{}l l l r@{}", "\\textbf{Model} & \\textbf{Best epoch} & \\textbf{Epochs run} & \\textbf{Minutes}", rows[:-1]))
+                 "tab:s_train", "@{}l l l r@{}", "\\textbf{Model} & \\textbf{Best epoch} & \\textbf{Epochs run} & \\textbf{Time (min)}", rows[:-1]))
 # S5-S6: all metrics, full and sampled, single models
-for regime, lab in [('full', 'full-catalogue ranking'), ('sampled', '99 sampled negatives')]:
+for regime, lab in [('full', 'full-catalog ranking'), ('sampled', '99 sampled negatives')]:
     rows = []
     for ds in D:
         rows.append("\\multicolumn{8}{@{}l}{\\textit{" + ds + "}} \\\\")
@@ -97,7 +97,7 @@ for ds in D:
             cur = r['stratification']; rows.append("\\multicolumn{7}{@{}l}{\\textit{" + esc(cur) + "}} \\\\")
         star = '$^{\\ast}$' if r['p_t_holm'] < 0.05 and r['p_w_holm'] < 0.05 else ''
         rows.append(f"\\quad {esc(r['stratum'])} & {r['n']} & {f4(r['synapse'])} & {f4(r['mf'])} & {sg(100 * r['diff'])} [{sg(100 * r['lo'])}, {sg(100 * r['hi'])}]{star} & {fp(r['p_t_holm'])} & {fp(r['p_w_holm'])} \\\\")
-    out.append(table(f"Per-stratum results on {ds}: number of users, mean full-catalogue NDCG@10 of SYNAPSE-KG and of {s['baseline']}, difference $\\times 100$ with 95\\% $t$-interval, and Holm-adjusted $p$-values (over all {s['n_strata']} strata) of the paired $t$-test and the Wilcoxon test. $^{{\\ast}}$: both adjusted $p$-values below 0.05.",
+    out.append(table(f"Per-stratum results on {ds}: number of users, mean full-catalog NDCG@10 of SYNAPSE-KG and of {s['baseline']}, difference $\\times 100$ with 95\\% $t$-interval, and Holm-adjusted $p$-values (over all {s['n_strata']} strata) of the paired $t$-test and the Wilcoxon test. $^{{\\ast}}$: both adjusted $p$-values below 0.05.",
                      "tab:s_strata_" + ('ml' if ds.startswith('Movie') else 'vg'), "@{}l r cc c cc@{}",
                      f"\\textbf{{Stratum}} & $n$ & \\textbf{{SYNAPSE-KG}} & \\textbf{{{s['baseline']}}} & \\textbf{{Difference}} & $p_t$ & $p_W$", rows, size='\\scriptsize'))
 open(OUTF, 'w').write("\n".join(out))

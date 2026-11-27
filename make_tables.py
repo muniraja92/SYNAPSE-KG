@@ -70,7 +70,7 @@ for k in ['ml', 'vg']:
         if m == 'SYNAPSE-KG': blocks.append(r"\cmidrule{1-8}")
         blocks.append(f"{m} & " + " & ".join(cells) + r" \\")
 w('t_main', r"""\begin{table}[!ht]
-\caption{Test results (mean $\pm$ standard deviation over five training seeds; deterministic methods have zero variance). Full-catalogue ranking is the primary protocol; the last two columns use 99 sampled negatives. Bold: best; underlined: second best (full ranking).}
+\caption{Test results (mean $\pm$ standard deviation over five training seeds; deterministic methods have zero variance). Full-catalog ranking is the primary protocol; the last two columns use 99 sampled negatives. Bold: best; underlined: second best (full ranking).}
 \label{tab:main_results}
 \footnotesize
 \begin{adjustbox}{max width=\textwidth}
@@ -148,7 +148,7 @@ w('t_training', r"""\begin{table}[!ht]
 \footnotesize
 \begin{tabular}{@{}l c c c c r@{}}
 \toprule
-\textbf{Model} & \textbf{Learning rate} & \textbf{Best epoch} & \textbf{Epochs run} & \textbf{Minutes} & \textbf{Parameters} \\
+\textbf{Model} & \textbf{Learning rate} & \textbf{Best epoch} & \textbf{Epochs run} & \textbf{Time (min)} & \textbf{Parameters} \\
 """ + "\n".join(blocks) + r"""
 \bottomrule
 \end{tabular}

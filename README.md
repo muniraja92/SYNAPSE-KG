@@ -1,4 +1,4 @@
-# SYNAPSE-KG: Evaluating Learned Fusion of Knowledge-Graph-Aware and Neural Recommenders under a Leakage-Free Protocol
+# SYNAPSE-KG — code for "Evaluating Learned Fusion of Knowledge-Graph-Aware and Neural Recommenders under a Leakage-Free Protocol"
 
 Code, protocol, logs, and result files for the article of the same title by Pasupuleti Muniraja and
 Shashank Mouli Satapathy (School of Computer Science and Engineering, Vellore Institute of Technology, India),
@@ -6,15 +6,15 @@ submitted to *PeerJ Computer Science*.
 
 ## Description
 
-SYNAPSE-KG fuses four neural recommenders with four auxiliary signals through a gated meta-learner, ORACLE
+SYNAPSE-KG (Semantic-Yielding Neural Attention with Path Synthesis and Encoding for Knowledge Graphs) fuses four neural recommenders with four auxiliary signals through a gated meta-learner, ORACLE
 (Output Routing And Component-Level Ensembling):
 
 | Input | Type |
 |---|---|
-| DRIP | target-aware attention over the interaction history |
-| MINT | momentum-contrastive two-tower model |
-| BRIDGE | bidirectional propagation over a knowledge graph (interactions, item attributes, temporal transitions) |
-| NEXIS | multi-interest extraction by self-attentive pooling |
+| DRIP (Dynamic Relational Intent Propagation) | target-aware attention over the interaction history |
+| MINT (Momentum-based Interest Network Tracking) | momentum-contrastive two-tower model |
+| BRIDGE (Bidirectional Relational Information Diffusion with Graph Encoding) | bidirectional propagation over a knowledge graph (interactions, item attributes, temporal transitions) |
+| NEXIS (Neural EXpert Interest Synthesis) | multi-interest extraction by self-attentive pooling |
 | ItemKNN, Content, Popularity, LightGCN | auxiliary scores |
 
 The study asks whether learned fusion improves on the strongest single model, and whether the learned gate beats
@@ -60,7 +60,7 @@ Data preprocessing is deterministic and is performed by `synapse_v5.py prep` (Me
 | `aggregate_v5.py` | Means and standard deviations, paired tests (Holm), two-level bootstrap intervals, TOST equivalence, training statistics. Writes `results.json` and `per_user_ndcg10.npz`. |
 | `stratify_v5.py` | Stratified analyses. Writes `stratification.json` and the forest plot `forest.pdf`. |
 | `make_tables.py`, `make_figures.py` | All tables and figures of the article, generated from the result files. |
-| `make_supplement.py` | The tables of Supplemental Text S1, generated from the result files. |
+| `make_supplement.py` | The tables of Supplemental Article S1, generated from the result files. |
 | `filter_meta.py` | Filters the Video Games item metadata. |
 | `PROTOCOL_v5.md` | Evaluation protocol written before the experiments, with dated amendments. |
 | `requirements.txt` | Exact package versions. |
@@ -86,7 +86,7 @@ The same files are provided with the article as Supplemental Data S1 (code and `
 pip install -r requirements.txt
 python make_tables.py out_ml1m out_vg tables         # Tables 1-7 of the article (LaTeX)
 python make_figures.py out_ml1m out_vg figures       # Figures 2 and 3
-python make_supplement.py out_ml1m out_vg s_tables.tex   # Tables S1-S9 of Supplemental Text S1
+python make_supplement.py out_ml1m out_vg s_tables.tex   # Tables S1-S9 of Supplemental Article S1
 ```
 
 Figures 4 and 5 are the stored forest plots `out_ml1m/forest.pdf` and `out_vg/forest.pdf`.
@@ -166,8 +166,8 @@ See `PROTOCOL_v5.md` and the Materials and Methods section of the article for de
 
 If you use this code, please cite the article:
 
-> Muniraja P, Satapathy SM. SYNAPSE-KG: Evaluating learned fusion of knowledge-graph-aware and neural recommenders
-> under a leakage-free protocol. *PeerJ Computer Science* (under review), 2026.
+> Muniraja P, Satapathy SM. Evaluating learned fusion of knowledge-graph-aware and neural recommenders under a
+> leakage-free protocol. *PeerJ Computer Science* (under review), 2026.
 
 Please also cite the datasets:
 
