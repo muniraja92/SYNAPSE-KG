@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "SYNAPSE-KG: Evaluating Learned Fusion of Knowledge-Graph-Aware and Neural Recommenders under a Leakage-Free Protocol"
+type: software
+authors:
+  - family-names: Muniraja
+    given-names: Pasupuleti
+    affiliation: "School of Computer Science and Engineering, Vellore Institute of Technology, Vellore, India"
+    orcid: "https://orcid.org/0009-0000-4880-2641"
+  - family-names: Satapathy
+    given-names: Shashank Mouli
+    affiliation: "School of Computer Science and Engineering, Vellore Institute of Technology, Vellore, India"
+repository-code: "https://github.com/muniraja92/SYNAPSE-KG"
+license: MIT
+version: "5.0.0"
+date-released: "2026-11-27"
+keywords:
+  - recommender systems
+  - knowledge graphs
+  - gated fusion
+  - leakage-free evaluation
+  - full-catalog ranking
+  - equivalence testing
