@@ -1,4 +1,4 @@
-# SYNAPSE-KG — code for "Evaluating Learned Fusion of Knowledge-Graph-Aware and Neural Recommenders under a Leakage-Free Protocol"
+# SYNAPSE-KG: Evaluating Learned Fusion of Knowledge-Graph-Aware and Neural Recommenders under a Leakage-Free Protocol
 
 Code, protocol, logs, and result files for the article of the same title by Pasupuleti Muniraja and
 Shashank Mouli Satapathy (School of Computer Science and Engineering, Vellore Institute of Technology, India),
@@ -166,8 +166,8 @@ See `PROTOCOL_v5.md` and the Materials and Methods section of the article for de
 
 If you use this code, please cite the article:
 
-> Muniraja P, Satapathy SM. Evaluating learned fusion of knowledge-graph-aware and neural recommenders under a
-> leakage-free protocol. *PeerJ Computer Science* (under review), 2026.
+> Muniraja P, Satapathy SM. SYNAPSE-KG: Evaluating learned fusion of knowledge-graph-aware and neural recommenders
+> under a leakage-free protocol. *PeerJ Computer Science* (under review), 2026.
 
 Please also cite the datasets:
 
