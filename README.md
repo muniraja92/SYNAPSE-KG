@@ -78,6 +78,10 @@ Each results folder contains:
 The same files are provided with the article as Supplemental Data S1 (code and `out_ml1m/`) and Supplemental Data S2
 (`out_vg/`).
 
+The `supplementary/` folder holds exact copies of the files submitted with the article: `Supplemental_Data_S1.zip`,
+`Supplemental_Data_S2.zip`, and `Supplemental_Article_S1.pdf` (with its LaTeX source; Tables S1-S9 are produced by
+`make_supplement.py`).
+
 ## Usage instructions
 
 **1. Tables and figures from the stored results (no data download needed, about a minute):**
